@@ -1,5 +1,6 @@
 package com.example.shymka.nodesandsuch;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -12,11 +13,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
-    private int Input1;
-    private int Input2;
+    private EditText int1;
+    private EditText int2;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @Override
@@ -25,10 +35,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         button = (Button) findViewById(R.id.button);
-        Input1 = Integer.parseInt(String.valueOf(findViewById(R.id.Input1))) ;
-        Input2 = Integer.parseInt(String.valueOf(findViewById(R.id.Input2)));
+        int1 = (EditText) findViewById(R.id.Input1);
+        int2 = (EditText) findViewById(R.id.Input2);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                int firstNum = Integer.parseInt(String.valueOf(int1.getText()));
+                int secNum = Integer.parseInt(String.valueOf(int2.getText()));
+                int sum = firstNum + secNum;
+
+                Toast.makeText(MainActivity.this, "Sum is " + sum, Toast.LENGTH_SHORT).show();
+
+
+            }
+        });
+
+
+                Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -39,6 +64,9 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -64,12 +92,52 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void onAddClick(View view) {
-        int firstNum = Input1;
-        int secNum = Input2;
+       /* int firstNum = Integer.parseInt(String.valueOf(int1));
+        int secNum = Integer.parseInt(String.valueOf(int2));
         int sum = firstNum + secNum;
 
         Toast.makeText(MainActivity.this, "Sum is " + sum, Toast.LENGTH_SHORT).show();
+        */
 
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.shymka.nodesandsuch/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://com.example.shymka.nodesandsuch/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
     }
 }
