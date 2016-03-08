@@ -17,11 +17,19 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import org.jgrapht.*;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.SimpleDirectedWeightedGraph;
+
+import java.util.List;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button button;
-    private EditText int1;
-    private EditText int2;
+    private EditText start;
+    private EditText dest;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -35,18 +43,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         button = (Button) findViewById(R.id.button);
-        int1 = (EditText) findViewById(R.id.Input1);
-        int2 = (EditText) findViewById(R.id.Input2);
+        start = (EditText) findViewById(R.id.Start);
+        dest = (EditText) findViewById(R.id.Dest);
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                int firstNum = Integer.parseInt(String.valueOf(int1.getText()));
-                int secNum = Integer.parseInt(String.valueOf(int2.getText()));
-                int sum = firstNum + secNum;
-
-                Toast.makeText(MainActivity.this, "Sum is " + sum, Toast.LENGTH_SHORT).show();
+               createGraph();
 
 
             }
@@ -91,14 +95,72 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void onAddClick(View view) {
-       /* int firstNum = Integer.parseInt(String.valueOf(int1));
-        int secNum = Integer.parseInt(String.valueOf(int2));
-        int sum = firstNum + secNum;
+    public void createGraph() {
 
-        Toast.makeText(MainActivity.this, "Sum is " + sum, Toast.LENGTH_SHORT).show();
-        */
+        SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>  graph =
+                new SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>
+                        (DefaultWeightedEdge.class);
+        graph.addVertex("Admin");
+        graph.addVertex("TFDL");
+        graph.addVertex("Craigie");
+        graph.addVertex("ICT");
+        graph.addVertex("MacHall");
+        graph.addVertex("Kines");
 
+
+        DefaultWeightedEdge e1 = graph.addEdge("Craigie", "TFDL");
+        graph.setEdgeWeight(e1, 150);
+
+        DefaultWeightedEdge e2 = graph.addEdge("TFDL", "Craigie");
+        graph.setEdgeWeight(e2, 150);
+
+        DefaultWeightedEdge e3 = graph.addEdge("TFDL", "Admin");
+        graph.setEdgeWeight(e3, 80);
+
+        DefaultWeightedEdge e4 = graph.addEdge("Admin", "TFDL");
+        graph.setEdgeWeight(e4, 80);
+
+        DefaultWeightedEdge e5 = graph.addEdge("Admin", "ICT");
+        graph.setEdgeWeight(e5, 600);
+
+
+        DefaultWeightedEdge e6 = graph.addEdge("ICT", "Admin");
+        graph.setEdgeWeight(e6, 600);
+
+        DefaultWeightedEdge e7 = graph.addEdge("ICT", "MacHall");
+        graph.setEdgeWeight(e7, 300);
+
+        DefaultWeightedEdge e8 = graph.addEdge("MacHall", "ICT");
+        graph.setEdgeWeight(e8, 300);
+
+        DefaultWeightedEdge e9 = graph.addEdge("TFDL", "MacHall");
+        graph.setEdgeWeight(e9, 100);
+
+        DefaultWeightedEdge e10 = graph.addEdge("MacHall", "TFDL");
+        graph.setEdgeWeight(e10, 100);
+
+        DefaultWeightedEdge e11 = graph.addEdge("Kines", "MacHall");
+        graph.setEdgeWeight(e9, 50);
+
+        DefaultWeightedEdge e12 = graph.addEdge("MacHall", "Kines");
+        graph.setEdgeWeight(e10, 50);
+
+
+        String firstNum = (String.valueOf(start.getText()));
+        String secNum = (String.valueOf(dest.getText()));
+
+       // System.out.println("Shortest path from Admin to Craigie:");
+        List shortest_path =   DijkstraShortestPath.findPathBetween(graph, firstNum, secNum);
+        System.out.println(shortest_path);
+        DijkstraShortestPath path;
+        path = new DijkstraShortestPath(graph, firstNum, secNum);
+        double distance =  path.getPathLength();
+        //System.out.println("Shortest Distance from Admin to Craigie:");
+        System.out.println(distance);
+
+
+
+        Toast.makeText(MainActivity.this, "Path is" + shortest_path + " Dist: " + distance, Toast.LENGTH_LONG).show();
     }
 
     @Override
