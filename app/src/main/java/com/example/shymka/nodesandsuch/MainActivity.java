@@ -1,5 +1,7 @@
 package com.example.shymka.nodesandsuch;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -30,7 +32,11 @@ public class MainActivity extends AppCompatActivity {
     private Button button;
     private EditText start;
     private EditText dest;
-    /**
+    Controller controller;
+    /*SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>  graph =
+            new SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>
+                    (DefaultWeightedEdge.class);
+
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
@@ -39,19 +45,37 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        final Controller controller = new Controller();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         button = (Button) findViewById(R.id.button);
         start = (EditText) findViewById(R.id.Start);
         dest = (EditText) findViewById(R.id.Dest);
+        //createGraph(graph);
+        //start.setText("From");
+        //dest.setText("To");
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-               createGraph();
+                String startPoint = (String.valueOf(start.getText()));
+                String end = (String.valueOf(dest.getText()));
 
+                // System.out.println("Shortest path from Admin to Craigie:");
+                List shortest_path =  controller.getInstructions(startPoint,end);
+                if(shortest_path == null){
+                    Toast.makeText(MainActivity.this, "Path does not exist", Toast.LENGTH_LONG).show();
+                }else{
+                    double distance =  controller.getDist(startPoint, end);
+                    Toast.makeText(MainActivity.this, "Path is " + shortest_path + "distance is: " + distance, Toast.LENGTH_LONG).show();
+                    Intent myIntent = new Intent(v.getContext(),Display.class);
+                    myIntent.putExtra("1", shortest_path.toString());
+                    myIntent.putExtra("2", distance);
+                    startActivityForResult(myIntent, 0);
+                }
 
             }
         });
@@ -93,74 +117,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    public void createGraph() {
-
-        SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>  graph =
-                new SimpleDirectedWeightedGraph<String, DefaultWeightedEdge>
-                        (DefaultWeightedEdge.class);
-        graph.addVertex("Admin");
-        graph.addVertex("TFDL");
-        graph.addVertex("Craigie");
-        graph.addVertex("ICT");
-        graph.addVertex("MacHall");
-        graph.addVertex("Kines");
-
-
-        DefaultWeightedEdge e1 = graph.addEdge("Craigie", "TFDL");
-        graph.setEdgeWeight(e1, 150);
-
-        DefaultWeightedEdge e2 = graph.addEdge("TFDL", "Craigie");
-        graph.setEdgeWeight(e2, 150);
-
-        DefaultWeightedEdge e3 = graph.addEdge("TFDL", "Admin");
-        graph.setEdgeWeight(e3, 80);
-
-        DefaultWeightedEdge e4 = graph.addEdge("Admin", "TFDL");
-        graph.setEdgeWeight(e4, 80);
-
-        DefaultWeightedEdge e5 = graph.addEdge("Admin", "ICT");
-        graph.setEdgeWeight(e5, 600);
-
-
-        DefaultWeightedEdge e6 = graph.addEdge("ICT", "Admin");
-        graph.setEdgeWeight(e6, 600);
-
-        DefaultWeightedEdge e7 = graph.addEdge("ICT", "MacHall");
-        graph.setEdgeWeight(e7, 300);
-
-        DefaultWeightedEdge e8 = graph.addEdge("MacHall", "ICT");
-        graph.setEdgeWeight(e8, 300);
-
-        DefaultWeightedEdge e9 = graph.addEdge("TFDL", "MacHall");
-        graph.setEdgeWeight(e9, 100);
-
-        DefaultWeightedEdge e10 = graph.addEdge("MacHall", "TFDL");
-        graph.setEdgeWeight(e10, 100);
-
-        DefaultWeightedEdge e11 = graph.addEdge("Kines", "MacHall");
-        graph.setEdgeWeight(e9, 50);
-
-        DefaultWeightedEdge e12 = graph.addEdge("MacHall", "Kines");
-        graph.setEdgeWeight(e10, 50);
-
-
-        String firstNum = (String.valueOf(start.getText()));
-        String secNum = (String.valueOf(dest.getText()));
-
-       // System.out.println("Shortest path from Admin to Craigie:");
-        List shortest_path =   DijkstraShortestPath.findPathBetween(graph, firstNum, secNum);
-        System.out.println(shortest_path);
-        DijkstraShortestPath path;
-        path = new DijkstraShortestPath(graph, firstNum, secNum);
-        double distance =  path.getPathLength();
-        //System.out.println("Shortest Distance from Admin to Craigie:");
-        System.out.println(distance);
-
-
-
-        Toast.makeText(MainActivity.this, "Path is" + shortest_path + " Dist: " + distance, Toast.LENGTH_LONG).show();
     }
 
     @Override
